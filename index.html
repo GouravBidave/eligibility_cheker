@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Advanced Eligibility Checker</title>
+    <title>Examination Eligibility Checker</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -29,77 +29,56 @@
         }
         h1 {
             font-size: 24px;
-            margin-bottom: 15px;
             color: #333;
         }
-        label {
-            display: block;
-            margin: 10px 0 5px;
-            font-weight: bold;
-        }
-        input {
+        input[type="date"], button {
             padding: 10px;
             width: 100%;
-            margin: 5px 0 10px;
+            margin: 10px 0;
             border: 1px solid #ccc;
             border-radius: 5px;
             box-sizing: border-box;
-            font-size: 14px;
+            font-size: 16px;
         }
         button {
-            padding: 10px;
-            width: 100%;
-            margin-top: 10px;
             background-color: #4CAF50;
             color: white;
-            border: none;
-            border-radius: 5px;
-            font-size: 16px;
-            cursor: pointer;
+            font-weight: bold;
         }
         button:hover {
             background-color: #45a049;
         }
-        #result, #summary {
+        #result {
+            font-weight: bold;
+            font-size: 20px;
             margin-top: 15px;
-            font-size: 16px;
-            opacity: 0;
-            transform: translateY(10px);
-            transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
         }
-        #result.valid {
+        .valid {
             color: green;
         }
-        #result.invalid {
+        .invalid {
             color: red;
-        }
-        .show {
-            opacity: 1;
-            transform: translateY(0);
         }
         .summary-section {
             text-align: left;
             margin-top: 15px;
         }
-        @media (max-width: 400px) {
-            .container {
-                width: 90%;
-            }
-        }
     </style>
 </head>
 <body>
+
     <div class="container">
         <h1>Examination Eligibility Checker</h1>
-        <label for="dob">Enter Date of Birth:</label>
+
+        <label for="dob">Enter Date of Birth</label>
         <input type="date" id="dob" required>
-        
-        <label for="exam-date">Enter Exam Date:</label>
+
+        <label for="exam-date">Enter Exam Date</label>
         <input type="date" id="exam-date" required>
-        
+
         <button onclick="checkEligibility()">Check Eligibility</button>
         <button onclick="resetForm()">Reset</button>
-        
+
         <div id="result"></div>
         <div id="summary" class="summary-section"></div>
     </div>
@@ -111,15 +90,13 @@
             const resultDiv = document.getElementById("result");
             const summaryDiv = document.getElementById("summary");
 
-            // Reset previous results
-            resultDiv.classList.remove("valid", "invalid");
-            resultDiv.classList.remove("show");
-            summaryDiv.classList.remove("show");
+            // Clear previous results
+            resultDiv.textContent = "";
             summaryDiv.innerHTML = "";
 
             if (!dobInput || !examDateInput) {
                 resultDiv.textContent = "Please enter both Date of Birth and Exam Date.";
-                resultDiv.classList.add("invalid", "show");
+                resultDiv.classList.add("invalid");
                 return;
             }
 
@@ -128,11 +105,11 @@
 
             if (examDate <= dob) {
                 resultDiv.textContent = "Exam Date must be after Date of Birth.";
-                resultDiv.classList.add("invalid", "show");
+                resultDiv.classList.add("invalid");
                 return;
             }
 
-            // Calculate the age on the exam date
+            // Calculate age on exam date
             let age = examDate.getFullYear() - dob.getFullYear();
             const monthDiff = examDate.getMonth() - dob.getMonth();
             const dayDiff = examDate.getDate() - dob.getDate();
@@ -141,8 +118,34 @@
                 age--;
             }
 
-            // Display summary
-            summaryDiv.innerHTML = `
-                <strong>Entered Details:</strong><br>
-                <ul>
-                    <li><strong>Date of Birth:</strong> ${dob.toDat
+            resultDiv.textContent = `The student is ${age} years old on the exam date.`;
+
+            if (age >= 12 && age <= 13) {
+                resultDiv.classList.add("valid");
+                summaryDiv.innerHTML = `
+                    <strong>Details:</strong><br>
+                    <strong>Date of Birth:</strong> ${dobInput}<br>
+                    <strong>Exam Date:</strong> ${examDateInput}<br>
+                    The student is eligible to take the examination.
+                `;
+            } else {
+                resultDiv.classList.add("invalid");
+                summaryDiv.innerHTML = `
+                    <strong>Details:</strong><br>
+                    <strong>Date of Birth:</strong> ${dobInput}<br>
+                    <strong>Exam Date:</strong> ${examDateInput}<br>
+                    The student is NOT eligible to take the examination.
+                `;
+            }
+        }
+
+        function resetForm() {
+            document.getElementById("dob").value = "";
+            document.getElementById("exam-date").value = "";
+            document.getElementById("result").textContent = "";
+            document.getElementById("summary").innerHTML = "";
+        }
+    </script>
+
+</body>
+</html>
